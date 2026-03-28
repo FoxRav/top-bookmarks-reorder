@@ -12,10 +12,13 @@ This extension processes browsing history and bookmarks locally within the user'
 
 - Browsing history is accessed only to calculate usage frequency and recency.
 - Bookmarks are accessed only to reorder them based on user action.
+- The browser’s **recently closed sessions** API is used only so you can preview and reopen **closed windows** on demand. Nothing is sent to the extension developer; session data stays within Chrome.
+- **Workspace snapshot** reads open window and tab URLs (http/https only in normal windows) only when you click **Save current workspace**, and stores that snapshot in **local browser storage** so you can reopen those pages later. Data is not sent to the extension developer.
+- **Broad host access** (`<all_urls>` in the manifest) is used only so saved http/https URLs can be opened in new windows when you restore a workspace — not to read arbitrary sites in the background or send data externally.
 
 ## Data storage
 
-- Settings and temporary preview data are stored using Chrome local storage.
+- Settings, bookmark previews, session previews, and optional **workspace snapshots** (saved tab URLs) are stored using Chrome local storage.
 - No personal data is transmitted, collected, or stored outside the browser.
 
 ## Data sharing
@@ -25,7 +28,7 @@ This extension processes browsing history and bookmarks locally within the user'
 
 ## User control
 
-- All actions require explicit user interaction (Analyze / Apply).
+- All actions require explicit user interaction (Analyze / Apply, session preview / restore, workspace save / restore).
 - Users can restore previous bookmark order at any time.
 
 ## Contact
