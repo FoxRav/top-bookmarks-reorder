@@ -1,0 +1,43 @@
+# Node (safety for future tooling)
+node_modules/
+
+# Build / dist
+dist/
+build/
+
+# Archives
+*.zip
+
+# Logs
+*.log
+
+# Env
+.env
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editors
+.vscode/
+.cursor/
+*.swp
+*.swo
+
+# Temp
+tmp/
+temp/
+
+# Coverage
+coverage/
+
+# Python cache (e.g. one-off icon tooling)
+__pycache__/
+*.pyc
+
+# Build helper scripts — not part of the runtime extension
+scripts/*.ps1
+
+# Local planning doc — not part of the published extension package
+chrome_extension_top_bookmarks_cursor_build_guide.md

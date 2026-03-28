@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Top Bookmarks Reorder — Settings</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="options-page">
+      <h1>Top Bookmarks Reorder</h1>
+      <form id="form-settings">
+        <div class="field">
+          <label for="topN">Top N (bookmarks to move to the left)</label>
+          <input type="number" id="topN" name="topN" min="1" max="100" step="1" />
+        </div>
+        <div class="field">
+          <label for="historyDays">History window (days)</label>
+          <input type="number" id="historyDays" name="historyDays" min="1" max="365" step="1" />
+        </div>
+        <div class="field checkbox-row">
+          <input type="checkbox" id="enableRecencyBonus" name="enableRecencyBonus" />
+          <label for="enableRecencyBonus">Enable recency bonus (recent visits rank higher)</label>
+        </div>
+        <div class="field">
+          <label for="excludedDomains">Excluded domains (one per line)</label>
+          <textarea id="excludedDomains" name="excludedDomains" spellcheck="false"></textarea>
+          <p class="hint">Example: <span class="muted">facebook.com</span></p>
+        </div>
+        <div class="field">
+          <label for="lockedBookmarkIds">Locked bookmark IDs (one per line)</label>
+          <textarea id="lockedBookmarkIds" name="lockedBookmarkIds" spellcheck="false"></textarea>
+          <p class="hint">
+            Find IDs in the Bookmarks Manager or by inspecting bookmarks. Locked items are not
+            moved.
+          </p>
+        </div>
+        <div class="btn-row">
+          <button type="submit" class="primary">Save</button>
+        </div>
+      </form>
+      <p class="status" id="opt-status" aria-live="polite"></p>
+    </div>
+    <script src="options.js"></script>
+  </body>
+</html>

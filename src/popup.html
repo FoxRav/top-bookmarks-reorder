@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Top Bookmarks Reorder</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="popup-wrap">
+      <h1>Top Bookmarks Reorder</h1>
+      <p class="tagline muted">
+        Optimize your bar from usage history — preview, apply, restore.
+      </p>
+      <p class="privacy-note muted" role="note">
+        All processing is local. No data is sent externally.
+      </p>
+      <div class="btn-row">
+        <button type="button" id="btn-analyze" class="primary">Analyze</button>
+        <button type="button" id="btn-preview">Preview Top 20</button>
+        <button type="button" id="btn-apply">Apply order</button>
+        <button type="button" id="btn-restore">Restore previous</button>
+      </div>
+      <p class="status" id="status" aria-live="polite"></p>
+      <div id="preview-area" class="preview-block" hidden>
+        <h2>Proposed top bookmarks</h2>
+        <ol class="compact" id="preview-list"></ol>
+        <p class="muted" id="preview-meta"></p>
+      </div>
+      <p><a href="#" id="open-settings">Open settings</a></p>
+    </div>
+    <script src="popup.js"></script>
+  </body>
+</html>
