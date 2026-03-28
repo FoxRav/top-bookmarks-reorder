@@ -28,7 +28,9 @@ This extension does **not** send any data externally. All processing is done loc
 
 Store listing copy, screenshot checklist, ZIP instructions, and review notes: **[STORE_LISTING.md](STORE_LISTING.md)**.
 
-- **Privacy policy:** [PRIVACY.md](PRIVACY.md) is the source text. **Chrome Web Store requires a public HTTPS URL** to that policy (e.g. `https://raw.githubusercontent.com/USER/REPO/branch/PRIVACY.md` for a public repo). A file only in a private folder or “we have PRIVACY.md in the zip” does **not** replace this.
+- **Privacy policy:** [PRIVACY.md](PRIVACY.md) is the source text. **Chrome Web Store requires a public HTTPS URL** — for this repo you can use the raw file:  
+  **`https://raw.githubusercontent.com/FoxRav/top-bookmarks-reorder/main/PRIVACY.md`**  
+  Repo: [github.com/FoxRav/top-bookmarks-reorder](https://github.com/FoxRav/top-bookmarks-reorder.git). A path only in the zip does **not** replace this.
 - **In-app:** the popup includes *“All processing is local. No data is sent externally.”* to align with `history` review expectations.
 - **Store ZIP:** create a zip that contains **only** `manifest.json`, `src/`, and `icons/` at the root (no `.git`, `dist`, or dev docs). Example (PowerShell from repo root):  
   `Compress-Archive -Path manifest.json,src,icons -DestinationPath dist/top-bookmarks-reorder-store.zip -Force`  

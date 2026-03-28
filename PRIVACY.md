@@ -2,6 +2,8 @@
 
 **Chrome Web Store:** this file is the source of truth. For submission you must provide a **public HTTPS URL** where this policy is readable (for example GitHub raw, GitHub Pages, Notion, or your own site). A path inside a private repo or only a local file is **not** sufficient.
 
+**Public copy (GitHub):** `https://raw.githubusercontent.com/FoxRav/top-bookmarks-reorder/main/PRIVACY.md`
+
 ---
 
 This extension processes browsing history and bookmarks locally within the user's browser.

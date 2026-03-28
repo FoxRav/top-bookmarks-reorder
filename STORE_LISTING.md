@@ -59,8 +59,9 @@ This extension does NOT send any data externally. All processing is done locally
 
 1. **Source of truth:** [PRIVACY.md](PRIVACY.md) in this repo (keep the hosted copy in sync).
 2. **Typical public URLs (pick one):**
-   - **GitHub raw** (works if the repo is public):  
-     `https://raw.githubusercontent.com/USERNAME/REPO/BRANCH/PRIVACY.md`
+   - **GitHub raw** (this project):  
+     **`https://raw.githubusercontent.com/FoxRav/top-bookmarks-reorder/main/PRIVACY.md`**  
+     Repo: [https://github.com/FoxRav/top-bookmarks-reorder](https://github.com/FoxRav/top-bookmarks-reorder.git)
    - **GitHub Pages** or **Notion public page** — same policy text, often nicer for humans than raw `.md`.
    - **Your own domain** — fine if HTTPS and publicly reachable.
 3. Paste that URL into the Developer Dashboard **Privacy policy** field.
