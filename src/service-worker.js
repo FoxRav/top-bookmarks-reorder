@@ -5,12 +5,16 @@
 importScripts(
   "utils.js",
   "storage-manager.js",
+  "session-restore.js",
+  "workspace-snapshot.js",
   "history-analyzer.js",
   "bookmark-matcher.js",
   "reorder-engine.js"
 );
 
 var S = self.TBRStorage;
+var SR = self.TBRSessionRestore;
+var W = self.TBRWorkspaceSnapshot;
 var H = self.TBRHistoryAnalyzer;
 var M = self.TBRBookmarkMatcher;
 var R = self.TBRReorderEngine;
@@ -45,7 +49,12 @@ async function buildPreview() {
     uniqueMatched.push(row);
   }
   var topDomains = ranked.slice(0, 50).map(function (r) {
-    return { domain: r.domain, score: r.score, visitCount: r.visitCount };
+    return {
+      domain: r.domain,
+      score: r.score,
+      windowVisitCount: r.windowVisitCount,
+      lifetimeVisitCountSum: r.lifetimeVisitCountSum,
+    };
   });
   var proposed = R.selectTopMovable(
     uniqueMatched.map(function (m) {
@@ -161,6 +170,75 @@ chrome.runtime.onMessage.addListener(function (message, _sender, sendResponse) {
         sendResponse({ ok: true, settings: s });
       })
       .catch(function (e) {
+        sendResponse({ ok: false, error: errMsg(e) });
+      });
+    return true;
+  }
+  if (type === "TBR_PREVIEW_RECENT_WINDOWS") {
+    SR.buildPreviewPayload()
+      .then(function (payload) {
+        return S.saveWindowsRestorePreview(payload).then(function () {
+          return payload;
+        });
+      })
+      .then(function (payload) {
+        sendResponse({ ok: true, preview: payload });
+      })
+      .catch(function (e) {
+        console.error("[Top Bookmarks Reorder] TBR_PREVIEW_RECENT_WINDOWS", e);
+        sendResponse({ ok: false, error: errMsg(e) });
+      });
+    return true;
+  }
+  if (type === "TBR_GET_WINDOWS_PREVIEW") {
+    S.getWindowsRestorePreview()
+      .then(function (p) {
+        sendResponse({ ok: true, preview: p });
+      })
+      .catch(function (e) {
+        sendResponse({ ok: false, error: errMsg(e) });
+      });
+    return true;
+  }
+  if (type === "TBR_RESTORE_RECENT_WINDOWS") {
+    var count = message.count;
+    if (typeof count !== "number" || count < 1) {
+      sendResponse({ ok: false, error: "Invalid count.", restored: 0 });
+      return false;
+    }
+    SR.restoreRecentWindows(count)
+      .then(function (r) {
+        sendResponse(r);
+      })
+      .catch(function (e) {
+        console.error("[Top Bookmarks Reorder] TBR_RESTORE_RECENT_WINDOWS", e);
+        sendResponse({
+          ok: false,
+          error: errMsg(e),
+          restored: 0,
+          requested: count,
+        });
+      });
+    return true;
+  }
+  if (type === "TBR_WORKSPACE_SAVE") {
+    W.captureAndSave()
+      .then(function (r) {
+        sendResponse(r);
+      })
+      .catch(function (e) {
+        console.error("[Top Bookmarks Reorder] TBR_WORKSPACE_SAVE", e);
+        sendResponse({ ok: false, error: errMsg(e) });
+      });
+    return true;
+  }
+  if (type === "TBR_WORKSPACE_RESTORE") {
+    W.restoreSaved()
+      .then(function (r) {
+        sendResponse(r);
+      })
+      .catch(function (e) {
+        console.error("[Top Bookmarks Reorder] TBR_WORKSPACE_RESTORE", e);
         sendResponse({ ok: false, error: errMsg(e) });
       });
     return true;

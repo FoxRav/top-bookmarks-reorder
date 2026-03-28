@@ -76,7 +76,7 @@
 
     function walk(node) {
       if (node.url) {
-        var dom = U.normalizeDomainFromUrl(node.url);
+        var dom = U.domainKeyForRanking(node.url);
         if (dom) {
           links.push({
             id: node.id,
@@ -156,7 +156,7 @@
   }
 
   /**
-   * @param {{ domain: string, score: number, visitCount: number, lastVisitTime: number }[]} rankedDomains
+   * @param {{ domain: string, score: number, windowVisitCount?: number, lastVisitTime: number }[]} rankedDomains
    * @param {{ links: { id: string, url: string, title: string, onBar: boolean }[], barId: string }} flat
    * @returns {{ matched: { domain: string, bookmarkId: string, url: string, title: string, score: number }[], unmatchedDomains: string[], domainToBookmarks: Map<string, { id: string, url: string, title: string, onBar: boolean }[]> }}
    */
@@ -165,7 +165,7 @@
     var byDomain = new Map();
     for (var i = 0; i < flat.links.length; i++) {
       var L = flat.links[i];
-      var dom = U.normalizeDomainFromUrl(L.url);
+      var dom = U.domainKeyForRanking(L.url);
       if (!dom) {
         continue;
       }
@@ -194,6 +194,7 @@
         url: best.url,
         title: best.title,
         score: row.score,
+        windowVisitCount: row.windowVisitCount,
       });
     }
 
@@ -205,7 +206,7 @@
   }
 
   /**
-   * @param {{ domain: string, score: number, visitCount: number, lastVisitTime: number }[]} rankedDomains
+   * @param {{ domain: string, score: number, windowVisitCount?: number, lastVisitTime: number }[]} rankedDomains
    * @returns {Promise<{ matched: ReturnType<typeof matchDomainsToBookmarks>['matched'], unmatchedDomains: string[], barId: string }>}
    */
   async function runMatch(rankedDomains) {

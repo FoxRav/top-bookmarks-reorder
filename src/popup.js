@@ -5,6 +5,11 @@
   var previewArea = document.getElementById("preview-area");
   var previewList = document.getElementById("preview-list");
   var previewMeta = document.getElementById("preview-meta");
+  var sessionStatusEl = document.getElementById("session-status");
+  var sessionPreviewArea = document.getElementById("session-preview-area");
+  var sessionWindowList = document.getElementById("session-window-list");
+  var sessionPreviewMeta = document.getElementById("session-preview-meta");
+  var workspaceStatusEl = document.getElementById("workspace-status");
 
   /**
    * @param {string} text
@@ -60,12 +65,17 @@
       var row = byId.get(id);
       var li = document.createElement("li");
       if (row) {
+        var wv =
+          row.windowVisitCount != null
+            ? ", visits in window " + String(row.windowVisitCount)
+            : "";
         li.textContent =
           (row.title || row.domain || "") +
           " — " +
           (row.domain || "") +
           " (score " +
           String(row.score) +
+          wv +
           ")";
       } else {
         li.textContent = "id " + id;
@@ -81,6 +91,99 @@
       String(unmatched) +
       " (sample).";
     previewArea.hidden = false;
+  }
+
+  /**
+   * @param {string} text
+   * @param {"ok"|"error"|"neutral"} kind
+   */
+  function setSessionStatus(text, kind) {
+    sessionStatusEl.textContent = text;
+    sessionStatusEl.className = "status session-status";
+    if (kind === "error") {
+      sessionStatusEl.classList.add("error");
+    } else if (kind === "ok") {
+      sessionStatusEl.classList.add("ok");
+    }
+  }
+
+  /**
+   * @param {Record<string, unknown>|null|undefined} preview
+   */
+  function renderSessionPreview(preview) {
+    sessionWindowList.innerHTML = "";
+    if (!preview || !Array.isArray(preview.windows)) {
+      sessionPreviewArea.hidden = true;
+      return;
+    }
+    var wins = preview.windows;
+    if (wins.length === 0) {
+      sessionPreviewMeta.textContent = "No recently closed windows found.";
+      sessionPreviewArea.hidden = false;
+      return;
+    }
+    for (var i = 0; i < wins.length; i++) {
+      var w = wins[i];
+      var li = document.createElement("li");
+      var label = w.label != null ? String(w.label) : "Window " + String(i + 1);
+      var tc = w.tabCount != null ? w.tabCount : 0;
+      li.textContent = label + " — " + String(tc) + " tabs";
+      sessionWindowList.appendChild(li);
+    }
+    var total =
+      typeof preview.totalWindowSessions === "number"
+        ? preview.totalWindowSessions
+        : wins.length;
+    sessionPreviewMeta.textContent =
+      "Showing up to " +
+      String(wins.length) +
+      " window(s). Total closed windows in history: " +
+      String(total) +
+      ".";
+    sessionPreviewArea.hidden = false;
+  }
+
+  /**
+   * @param {number} n
+   */
+  /**
+   * @param {string} text
+   * @param {"ok"|"error"|"neutral"} kind
+   */
+  function setWorkspaceStatus(text, kind) {
+    workspaceStatusEl.textContent = text;
+    workspaceStatusEl.className = "status workspace-status";
+    if (kind === "error") {
+      workspaceStatusEl.classList.add("error");
+    } else if (kind === "ok") {
+      workspaceStatusEl.classList.add("ok");
+    }
+  }
+
+  function restoreWindows(n) {
+    setSessionStatus("Restoring windows…", "neutral");
+    send("TBR_RESTORE_RECENT_WINDOWS", { count: n })
+      .then(function (res) {
+        if (res.ok) {
+          if (res.partial) {
+            if (res.restored === 1) {
+              setSessionStatus("Only 1 recent window was available.", "ok");
+            } else {
+              setSessionStatus(
+                "Only " + res.restored + " recent windows were available.",
+                "ok"
+              );
+            }
+          } else {
+            setSessionStatus("Restored " + res.restored + " windows.", "ok");
+          }
+          return;
+        }
+        setSessionStatus(res.error || "Restore failed.", "error");
+      })
+      .catch(function (e) {
+        setSessionStatus(errMsg(e), "error");
+      });
   }
 
   /**
@@ -182,4 +285,83 @@
       }
     })
     .catch(function () {});
+
+  document.getElementById("btn-session-preview").addEventListener("click", function () {
+    setSessionStatus("Loading…", "neutral");
+    send("TBR_PREVIEW_RECENT_WINDOWS")
+      .then(function (res) {
+        if (!res.ok) {
+          setSessionStatus(res.error || "Preview failed.", "error");
+          sessionPreviewArea.hidden = true;
+          return;
+        }
+        renderSessionPreview(res.preview);
+        setSessionStatus("Preview updated.", "ok");
+      })
+      .catch(function (e) {
+        setSessionStatus(errMsg(e), "error");
+      });
+  });
+
+  document.getElementById("btn-restore-w3").addEventListener("click", function () {
+    restoreWindows(3);
+  });
+  document.getElementById("btn-restore-w4").addEventListener("click", function () {
+    restoreWindows(4);
+  });
+  document.getElementById("btn-restore-w5").addEventListener("click", function () {
+    restoreWindows(5);
+  });
+
+  send("TBR_GET_WINDOWS_PREVIEW")
+    .then(function (res) {
+      if (res && res.ok && res.preview) {
+        renderSessionPreview(res.preview);
+      }
+    })
+    .catch(function () {});
+
+  document.getElementById("btn-workspace-save").addEventListener("click", function () {
+    setWorkspaceStatus("Saving workspace…", "neutral");
+    send("TBR_WORKSPACE_SAVE")
+      .then(function (res) {
+        if (!res.ok) {
+          setWorkspaceStatus(res.error || "Save failed.", "error");
+          return;
+        }
+        setWorkspaceStatus(
+          "Saved workspace (" +
+            String(res.windowCount) +
+            " windows, " +
+            String(res.tabCount) +
+            " tabs).",
+          "ok"
+        );
+      })
+      .catch(function (e) {
+        setWorkspaceStatus(errMsg(e), "error");
+      });
+  });
+
+  document.getElementById("btn-workspace-restore").addEventListener("click", function () {
+    setWorkspaceStatus("Opening saved workspace…", "neutral");
+    send("TBR_WORKSPACE_RESTORE")
+      .then(function (res) {
+        if (!res.ok) {
+          setWorkspaceStatus(res.error || "Restore failed.", "error");
+          return;
+        }
+        setWorkspaceStatus(
+          "Opened " +
+            String(res.windowsOpened) +
+            " window(s) (" +
+            String(res.tabsOpened) +
+            " tabs).",
+          "ok"
+        );
+      })
+      .catch(function (e) {
+        setWorkspaceStatus(errMsg(e), "error");
+      });
+  });
 })();

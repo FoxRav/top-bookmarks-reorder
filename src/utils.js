@@ -50,6 +50,38 @@
   }
 
   /**
+   * Group related hosts into one ranking key (e.g. all YouTube hosts → youtube.com).
+   * @param {string} normalizedDomain from normalizeDomainFromUrl
+   * @returns {string|null}
+   */
+  function groupDomainForRanking(normalizedDomain) {
+    if (!normalizedDomain) {
+      return null;
+    }
+    var d = normalizedDomain.toLowerCase().replace(/^www\./, "");
+    if (d === "youtu.be") {
+      return "youtube.com";
+    }
+    if (d === "youtube.com" || d.endsWith(".youtube.com")) {
+      return "youtube.com";
+    }
+    return d;
+  }
+
+  /**
+   * Same domain key as history ranking uses, for bookmark matching.
+   * @param {string} urlStr
+   * @returns {string|null}
+   */
+  function domainKeyForRanking(urlStr) {
+    var n = normalizeDomainFromUrl(urlStr);
+    if (!n) {
+      return null;
+    }
+    return groupDomainForRanking(n);
+  }
+
+  /**
    * Recency bonus tiers (milliseconds ago from `now`).
    * @param {number} lastVisitTimeMs Chrome history timestamp (ms)
    * @param {number} nowMs
@@ -78,6 +110,8 @@
     hostnameFromUrl,
     normalizeDomainFromUrl,
     normalizeDomainKey,
+    groupDomainForRanking,
+    domainKeyForRanking,
     recencyBonus,
   };
 })(typeof self !== "undefined" ? self : this);

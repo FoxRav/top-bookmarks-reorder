@@ -27,6 +27,44 @@
         <p class="muted" id="preview-meta"></p>
       </div>
       <p><a href="#" id="open-settings">Open settings</a></p>
+
+      <hr class="session-divider" />
+
+      <section class="session-card" aria-labelledby="session-restore-heading">
+        <h2 id="session-restore-heading" class="session-heading">Session restore</h2>
+        <p class="muted session-hint">
+          Reopens recently <strong>closed windows</strong> (Chrome session history). Bookmarks reorder is unchanged.
+        </p>
+        <div class="btn-row session-btn-row">
+          <button type="button" id="btn-session-preview">Preview recent windows</button>
+        </div>
+        <div class="btn-row session-btn-row">
+          <button type="button" id="btn-restore-w3">Restore last 3 windows</button>
+          <button type="button" id="btn-restore-w4">Restore last 4 windows</button>
+          <button type="button" id="btn-restore-w5">Restore last 5 windows</button>
+        </div>
+        <p class="status session-status" id="session-status" aria-live="polite"></p>
+        <div id="session-preview-area" class="preview-block session-preview" hidden>
+          <h3 class="session-preview-title">Recently closed windows</h3>
+          <ul class="compact session-window-list" id="session-window-list"></ul>
+          <p class="muted" id="session-preview-meta"></p>
+        </div>
+      </section>
+
+      <hr class="session-divider" />
+
+      <section class="session-card workspace-snapshot-card" aria-labelledby="workspace-snapshot-heading">
+        <h2 id="workspace-snapshot-heading" class="session-heading">Workspace snapshot</h2>
+        <p class="muted session-hint">
+          Saves <strong>open</strong> normal windows (http/https tabs only) and reopens them later. Separate from
+          Session restore above.
+        </p>
+        <div class="btn-row session-btn-row">
+          <button type="button" id="btn-workspace-save" class="primary">Save current workspace</button>
+          <button type="button" id="btn-workspace-restore">Restore saved workspace</button>
+        </div>
+        <p class="status workspace-status" id="workspace-status" aria-live="polite"></p>
+      </section>
     </div>
     <script src="popup.js"></script>
   </body>

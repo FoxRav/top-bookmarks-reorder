@@ -14,6 +14,8 @@ With a simple **preview → apply** workflow, you can safely reorder your bookma
 - Configurable Top N bookmarks
 - Exclude domains and lock specific bookmarks
 - Fully local processing — no data leaves your browser
+- **Session restore:** reopen recently closed **windows** (Chrome `sessions` API) — preview tab counts, restore up to 5 windows
+- **Workspace snapshot:** save open normal windows (http/https tabs) and reopen them later (`chrome.windows` / `chrome.tabs`; stored locally)
 
 ### How it works
 
@@ -23,6 +25,14 @@ With a simple **preview → apply** workflow, you can safely reorder your bookma
 4. Apply changes safely
 
 This extension does **not** send any data externally. All processing is done locally in your browser.
+
+### Session restore (Quick restore)
+
+The popup’s **Session restore** section uses **`chrome.sessions`** to list and reopen **recently closed windows** (not single tabs). Use **Preview recent windows** to see up to five closed windows and tab counts; use **Restore last 3 / 4 / 5 windows** to reopen that many, newest first. If fewer closed windows exist than requested, only those are restored and the status explains it.
+
+### Workspace snapshot
+
+**Workspace snapshot** is separate from Session restore. **Save current workspace** reads **normal** (non-incognito) browser windows and **http/https** tabs only, then stores that structure in **`chrome.storage.local`**. **Restore saved workspace** opens **new** windows with those URLs (Chrome does not close your current windows). Incognito windows and non-http(s) tabs (e.g. `chrome://`) are skipped. The manifest includes **`tabs`**, **`windows`**, and **`host_permissions`** (`<all_urls>`) so tab URLs can be read and reopened.
 
 ### Chrome Web Store (publishing)
 
@@ -42,6 +52,10 @@ Store listing copy, screenshot checklist, ZIP instructions, and review notes: **
 
 - Google Chrome (Manifest V3)
 - No build step: load the folder as an unpacked extension
+
+## Developer documentation
+
+- **[Session restore & Workspace snapshot — master spec](docs/SESSION_WORKSPACE_MASTER_SPEC.md)** — Cursor master spec, phase 1/2 prompts, API references, usage (Quick Restore vs snapshot), future ideas (e.g. tab groups).
 
 ## Install (development)
 
@@ -70,6 +84,8 @@ Store listing copy, screenshot checklist, ZIP instructions, and review notes: **
 | `src/history-analyzer.js` | History search and domain scoring |
 | `src/bookmark-matcher.js` | Match domains to bookmarks (prefer bar, shorter URL) |
 | `src/reorder-engine.js` | Backup bar order, reorder, restore |
+| `src/session-restore.js` | Recently closed windows: preview + restore (`chrome.sessions`) |
+| `src/workspace-snapshot.js` | Save/restore open workspace (`chrome.windows` + tab URLs in local storage) |
 | `src/popup.html` / `popup.js` | Popup UI |
 | `src/options.html` / `options.js` | Settings page |
 | `src/styles.css` | Shared styles |

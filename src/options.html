@@ -21,10 +21,19 @@
           <input type="checkbox" id="enableRecencyBonus" name="enableRecencyBonus" />
           <label for="enableRecencyBonus">Enable recency bonus (recent visits rank higher)</label>
         </div>
+        <div class="field checkbox-row">
+          <input type="checkbox" id="debugHistory" name="debugHistory" />
+          <label for="debugHistory"
+            >Log ranking debug to extension service worker console (Analyze)</label
+          >
+        </div>
         <div class="field">
           <label for="excludedDomains">Excluded domains (one per line)</label>
           <textarea id="excludedDomains" name="excludedDomains" spellcheck="false"></textarea>
-          <p class="hint">Example: <span class="muted">facebook.com</span></p>
+          <p class="hint">
+            Example: <span class="muted">facebook.com</span>. For YouTube, use
+            <span class="muted">youtube.com</span> to exclude all YouTube hosts (www, m, music, etc.).
+          </p>
         </div>
         <div class="field">
           <label for="lockedBookmarkIds">Locked bookmark IDs (one per line)</label>

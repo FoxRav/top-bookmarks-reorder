@@ -8,6 +8,8 @@
   var SETTINGS_KEY = "tbr_settings";
   var RESTORE_KEY = "tbr_restore_snapshot";
   var PREVIEW_SESSION_KEY = "tbr_preview_session";
+  var SESSION_WINDOWS_PREVIEW_KEY = "tbr_session_windows_preview";
+  var WORKSPACE_SNAPSHOT_KEY = "tbr_workspace_snapshot";
 
   var DEFAULT_SETTINGS = {
     topN: 20,
@@ -15,6 +17,7 @@
     enableRecencyBonus: true,
     lockedBookmarkIds: [],
     excludedDomains: [],
+    debugHistory: false,
   };
 
   function promisify(fn) {
@@ -128,6 +131,52 @@
     return data[PREVIEW_SESSION_KEY] || null;
   }
 
+  /**
+   * Last Session restore preview (recent closed windows list).
+   * @param {Record<string, unknown>|null} data
+   * @returns {Promise<void>}
+   */
+  async function saveWindowsRestorePreview(data) {
+    await promisify(function (cb) {
+      var o = {};
+      o[SESSION_WINDOWS_PREVIEW_KEY] = data;
+      chrome.storage.local.set(o, cb);
+    });
+  }
+
+  /**
+   * @returns {Promise<Record<string, unknown>|null>}
+   */
+  async function getWindowsRestorePreview() {
+    var data = await promisify(function (cb) {
+      chrome.storage.local.get([SESSION_WINDOWS_PREVIEW_KEY], cb);
+    });
+    return data[SESSION_WINDOWS_PREVIEW_KEY] || null;
+  }
+
+  /**
+   * Saved workspace (windows + http/https tabs), separate from sessions Quick Restore.
+   * @param {Record<string, unknown>|null} data
+   * @returns {Promise<void>}
+   */
+  async function saveWorkspaceSnapshot(data) {
+    await promisify(function (cb) {
+      var o = {};
+      o[WORKSPACE_SNAPSHOT_KEY] = data;
+      chrome.storage.local.set(o, cb);
+    });
+  }
+
+  /**
+   * @returns {Promise<Record<string, unknown>|null>}
+   */
+  async function getWorkspaceSnapshot() {
+    var data = await promisify(function (cb) {
+      chrome.storage.local.get([WORKSPACE_SNAPSHOT_KEY], cb);
+    });
+    return data[WORKSPACE_SNAPSHOT_KEY] || null;
+  }
+
   global.TBRStorage = {
     SETTINGS_KEY: SETTINGS_KEY,
     DEFAULT_SETTINGS: DEFAULT_SETTINGS,
@@ -137,5 +186,9 @@
     getRestoreSnapshot: getRestoreSnapshot,
     saveSessionPreview: saveSessionPreview,
     getSessionPreview: getSessionPreview,
+    saveWindowsRestorePreview: saveWindowsRestorePreview,
+    getWindowsRestorePreview: getWindowsRestorePreview,
+    saveWorkspaceSnapshot: saveWorkspaceSnapshot,
+    getWorkspaceSnapshot: getWorkspaceSnapshot,
   };
 })(typeof self !== "undefined" ? self : this);

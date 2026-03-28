@@ -46,12 +46,14 @@
       var topN = document.getElementById("topN");
       var historyDays = document.getElementById("historyDays");
       var rec = document.getElementById("enableRecencyBonus");
+      var dbg = document.getElementById("debugHistory");
       var ex = document.getElementById("excludedDomains");
       var locked = document.getElementById("lockedBookmarkIds");
       if (!raw || typeof raw !== "object") {
         topN.value = "20";
         historyDays.value = "30";
         rec.checked = true;
+        dbg.checked = false;
         ex.value = "";
         locked.value = "";
         return;
@@ -59,6 +61,7 @@
       topN.value = String(raw.topN != null ? raw.topN : 20);
       historyDays.value = String(raw.historyDays != null ? raw.historyDays : 30);
       rec.checked = raw.enableRecencyBonus !== false;
+      dbg.checked = raw.debugHistory === true;
       ex.value = listToLines(raw.excludedDomains);
       locked.value = listToLines(raw.lockedBookmarkIds);
     });
@@ -80,6 +83,7 @@
       topN: topN,
       historyDays: historyDays,
       enableRecencyBonus: document.getElementById("enableRecencyBonus").checked,
+      debugHistory: document.getElementById("debugHistory").checked,
       excludedDomains: linesToList(document.getElementById("excludedDomains").value).map(function (d) {
         return d.toLowerCase().replace(/^www\./, "");
       }),

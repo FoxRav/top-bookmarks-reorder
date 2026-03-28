@@ -1,9 +1,10 @@
 {
   "manifest_version": 3,
   "name": "Top Bookmarks Reorder",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "Automatically move your most-used bookmarks to the left based on browsing history. Preview changes and restore anytime.",
-  "permissions": ["bookmarks", "history", "storage"],
+  "permissions": ["bookmarks", "history", "storage", "sessions", "tabs", "windows"],
+  "host_permissions": ["<all_urls>"],
   "action": {
     "default_popup": "src/popup.html",
     "default_icon": {
